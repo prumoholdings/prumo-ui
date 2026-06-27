@@ -18,3 +18,6 @@ export type { TokenSwatchProps, TokenPaletteProps } from "./components/TokenSwat
 
 // The full shadcn primitive palette (token-reading).
 export * from "./components/ui";
+
+// The high-level composites (archetype-mapped).
+export * from "./components/composites";

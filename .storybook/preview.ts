@@ -10,6 +10,12 @@ const preview: Preview = {
     // axe (a11y addon) runs on every story; surfaces violations in the panel.
     a11y: { test: "error" },
     backgrounds: { disable: true },
+    // Sidebar order: Tokens (the contract) -> Primitives -> Composites.
+    options: {
+      storySort: {
+        order: ["Tokens", "Primitives", "Composites"],
+      },
+    },
   },
 };
 

@@ -1,10 +1,16 @@
 /**
  * @prumo/ui — public entry point.
  *
- * Stage 1 (scaffold) exports: the canonical token contract + the smoke
- * component. The full shadcn primitive palette + the high-level composites
- * (DataTable/ComparisonTable/CardCollection/StatDashboard/Board/FormWizard)
- * land in Stage 2.
+ * Exports the complete design system (Stage 2):
+ *   - the canonical token contract (names + typed view + tokenVar + helpers);
+ *   - the full shadcn primitive palette (token-reading);
+ *   - the high-level COMPOSITES mapped to the SaaS frontend archetypes
+ *     (DataTable / ComparisonTable / CardCollection / StatDashboard / Board /
+ *     FormWizard) + useTokenColors for chart theming.
+ *
+ * Every component reads the token contract ONLY via `var(--*)` — a per-concept
+ * `:root` skins the whole catalog. See CATALOG.md for the component-by-archetype
+ * index the companycouncil screen-author composes from.
  *
  * Consumers MUST also import the token contract CSS once at app root:
  *   import "@prumo/ui/tokens.css";

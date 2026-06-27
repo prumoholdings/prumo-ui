@@ -3,7 +3,7 @@ import { TokenSwatch, TokenPalette } from "./TokenSwatch";
 import { TOKEN_FAMILIES } from "../tokens";
 
 const meta = {
-  title: "Foundations/Tokens",
+  title: "Tokens/Contract",
   component: TokenSwatch,
   tags: ["autodocs"],
   parameters: { layout: "padded" },

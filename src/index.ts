@@ -15,3 +15,6 @@ export * from "./tokens";
 export { cn } from "./lib/utils";
 export { TokenSwatch, TokenPalette } from "./components/TokenSwatch";
 export type { TokenSwatchProps, TokenPaletteProps } from "./components/TokenSwatch";
+
+// The full shadcn primitive palette (token-reading).
+export * from "./components/ui";

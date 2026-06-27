@@ -67,3 +67,9 @@ Stage 1 (scaffold) — the repo + the canonical token contract + a working
 Storybook/vitest + a smoke component (`TokenSwatch`). The full shadcn primitive
 palette + the composites (DataTable/ComparisonTable/CardCollection/StatDashboard/
 Board/FormWizard) land in Stage 2.
+
+## License
+
+Proprietary — Copyright © 2026 Prumo Holdings. All rights reserved. Published
+publicly solely for git-ref provisioning; no use/copy/modify/distribute rights
+are granted. See [`LICENSE`](./LICENSE).

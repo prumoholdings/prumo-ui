@@ -1,5 +1,4 @@
 node_modules/
-dist/
 storybook-static/
 coverage/
 *.log
@@ -7,3 +6,4 @@ coverage/
 .vite/
 *.tsbuildinfo
 vite.config.ts.timestamp-*
+# dist is SHIPPED (git-ref consumers get prebuilt JS; no build-on-install)

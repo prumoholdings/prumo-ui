@@ -15,3 +15,14 @@ export type {
   ComparisonAttribute,
   CellFormat,
 } from "./comparison-table";
+
+export { CardCollection } from "./card-collection";
+export type { CardCollectionProps, CardCollectionLayout } from "./card-collection";
+
+export { StatDashboard } from "./stat-dashboard";
+export type {
+  StatDashboardProps,
+  StatKpi,
+  StatChartSpec,
+  ChartKind,
+} from "./stat-dashboard";

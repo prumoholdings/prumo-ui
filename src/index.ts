@@ -13,6 +13,7 @@ import "./tokens.css";
 
 export * from "./tokens";
 export { cn } from "./lib/utils";
+export { useTokenColors } from "./lib/use-token-colors";
 export { TokenSwatch, TokenPalette } from "./components/TokenSwatch";
 export type { TokenSwatchProps, TokenPaletteProps } from "./components/TokenSwatch";
 

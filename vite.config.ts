@@ -23,8 +23,20 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      // peer deps must stay external — the consuming app provides them.
-      external: ["react", "react-dom", "react/jsx-runtime"],
+      // Externalize ALL third-party deps — the consuming product PROVIDES + tree-
+      // shakes them (Phase 63 single-source, 2026-06-27). We bundle ONLY our own
+      // source (relative imports + the `@/` alias). Everything else (react, Radix,
+      // Tremor, TanStack, framer-motion, cmdk, vaul, react-day-picker, lucide,
+      // cva/clsx/tailwind-merge) is a peer the consumer installs from
+      // stack_manifest. This shrinks dist from ~1.9MB → only our component code, so
+      // the product can tree-shake what it doesn't compose. The bare-specifier test
+      // (no leading `.` / `/` / `@/` and not a rollup virtual `\0` module) marks a
+      // third-party module external; our own source (relative + `@/` alias) bundles.
+      external: (id) =>
+        !id.startsWith(".") &&
+        !id.startsWith("/") &&
+        !id.startsWith("@/") &&
+        !id.includes("\0"),
     },
     sourcemap: true,
   },

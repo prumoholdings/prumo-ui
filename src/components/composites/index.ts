@@ -26,3 +26,15 @@ export type {
   StatChartSpec,
   ChartKind,
 } from "./stat-dashboard";
+
+export { Board } from "./board";
+export type { BoardProps, BoardColumn, BoardCard } from "./board";
+
+export { FormWizard } from "./form-wizard";
+export type {
+  FormWizardProps,
+  WizardStep,
+  WizardField,
+  WizardValues,
+  FieldType,
+} from "./form-wizard";

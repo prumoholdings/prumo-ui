@@ -85,7 +85,9 @@ describe("ComparisonTable", () => {
       <ComparisonTable entities={entities} attributes={attributes} caption="Compare" />,
     );
     const table = screen.getByRole("table");
-    expect(within(table).getByText("Aurora")).toBeInTheDocument();
+    // Aurora appears in the column header AND in each data cell's mobile
+    // identity chip (one responsive DOM tree), so it is present more than once.
+    expect(within(table).getAllByText("Aurora").length).toBeGreaterThan(0);
     expect(within(table).getByText("Rating")).toBeInTheDocument();
     // row header semantics
     expect(screen.getAllByRole("rowheader").length).toBe(attributes.length);
@@ -108,6 +110,49 @@ describe("ComparisonTable", () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
+  it("exposes accessible text equivalents for the visual cues + renders count units", async () => {
+    const richAttrs: ComparisonAttribute[] = [
+      { id: "progress", label: "Progress", format: "score", scoreMax: 10 },
+      { id: "fsm", label: "Free meals", format: "percent" },
+      { id: "size", label: "Class size", format: "count", unit: "pupils" },
+      { id: "ofsted", label: "Ofsted", format: "badge" },
+    ];
+    const richEntities: ComparisonEntity[] = [
+      { id: "a", name: "Alpha", values: { progress: 8.4, fsm: 22, size: 27, ofsted: "Outstanding" } },
+    ];
+    const { container } = render(
+      <ComparisonTable entities={richEntities} attributes={richAttrs} caption="Schools" />,
+    );
+    // score meter has an sr-only equivalent and shows the number visually
+    expect(screen.getByText("8.4 out of 10")).toBeInTheDocument();
+    expect(screen.getByText("8.4")).toBeInTheDocument();
+    // percent exposes a spoken equivalent + a visible %
+    expect(screen.getByText("22 percent")).toBeInTheDocument();
+    expect(screen.getByText("22%")).toBeInTheDocument();
+    // count renders the muted unit suffix
+    expect(screen.getByText("pupils")).toBeInTheDocument();
+    // badge category renders its label as a real pill
+    expect(screen.getByText("Outstanding")).toBeInTheDocument();
+    // the rich cues stay axe-clean
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it("renders distinct categorical badge tones deterministically (anti-ranking, not verdict-colored)", () => {
+    const attrs: ComparisonAttribute[] = [{ id: "ofsted", label: "Ofsted", format: "badge" }];
+    const ents: ComparisonEntity[] = [
+      { id: "a", name: "A", values: { ofsted: "Outstanding" } },
+      { id: "b", name: "B", values: { ofsted: "Good" } },
+      { id: "c", name: "C", values: { ofsted: "Requires Improvement" } },
+    ];
+    render(<ComparisonTable entities={ents} attributes={attrs} />);
+    // all three categories render as pills; tone is categorical (no success/danger token)
+    for (const label of ["Outstanding", "Good", "Requires Improvement"]) {
+      const pill = screen.getByText(label);
+      expect(pill).toBeInTheDocument();
+      expect(pill.className).not.toMatch(/destructive|success|danger|green|red/);
+    }
+  });
+
   it("renders an em-dash for missing values (sparse data, no crash)", () => {
     render(
       <ComparisonTable
@@ -115,7 +160,7 @@ describe("ComparisonTable", () => {
         attributes={attributes}
       />,
     );
-    expect(screen.getByText("Partial")).toBeInTheDocument();
+    expect(screen.getAllByText("Partial").length).toBeGreaterThan(0);
     expect(screen.getAllByText("—").length).toBeGreaterThan(0);
   });
 });

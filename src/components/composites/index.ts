@@ -56,3 +56,6 @@ export type { TimelineProps, TimelineEntry } from "./timeline";
 
 export { FileUpload } from "./file-upload";
 export type { FileUploadProps, UploadFile } from "./file-upload";
+
+export { SettingsPanel } from "./settings-panel";
+export type { SettingsPanelProps, SettingsSection, SettingsRow } from "./settings-panel";

@@ -36,7 +36,7 @@ export interface StatKpi {
   hint?: string;
 }
 
-export type ChartKind = "area" | "bar" | "line" | "donut";
+export type ChartKind = "area" | "bar" | "line" | "donut" | "funnel";
 
 export interface StatChartSpec {
   kind: ChartKind;
@@ -230,6 +230,62 @@ function SmoothDonut({
 /* Safe Tremor palette NAMES used only as placeholders so Tremor renders valid SVG
  * (our oklch tokens break Tremor's color->gradient-id). The real, brand-token
  * colors are painted onto the recharts series below. */
+/**
+ * Funnel — a token-driven horizontal-bar funnel (stage label + value + conversion%
+ * + a bar whose width ∝ value, decreasing down the stages). Like SmoothDonut it is a
+ * pure token render (Tremor can't consume oklch). Neutral/factual drop-off — it shows
+ * stage progression, never good/bad (anti-ranking).
+ */
+function Funnel({
+  data,
+  indexKey,
+  categoryKey,
+  tokens,
+}: {
+  data: Record<string, string | number>[];
+  indexKey: string;
+  categoryKey: string;
+  tokens: string[];
+}) {
+  const stages = data.map((d) => ({ label: String(d[indexKey]), value: Number(d[categoryKey]) || 0 }));
+  const max = Math.max(...stages.map((s) => s.value), 1);
+  const first = stages[0]?.value || 1;
+  return (
+    <ol className="mt-2 flex flex-col gap-3">
+      {stages.map((s, i) => {
+        const widthPct = (s.value / max) * 100;
+        const conv = i === 0 ? 100 : (s.value / first) * 100;
+        return (
+          <li key={i}>
+            <div className="flex items-baseline justify-between gap-2" style={{ fontSize: "var(--text-small)" }}>
+              <span className="font-medium text-foreground">{s.label}</span>
+              <span className="tabular-nums text-muted-foreground">
+                {s.value.toLocaleString()}
+                {i > 0 && <span className="ml-1.5">· {conv.toFixed(0)}%</span>}
+              </span>
+            </div>
+            <div
+              className="mt-1 h-7 w-full overflow-hidden"
+              style={{ borderRadius: "var(--radius-md)", background: "color-mix(in oklch, var(--muted) 38%, var(--card))" }}
+            >
+              <div
+                className="h-full transition-[width]"
+                style={{
+                  width: `${widthPct}%`,
+                  minWidth: s.value > 0 ? "0.25rem" : 0,
+                  borderRadius: "var(--radius-md)",
+                  // subtle gradient lift (srgb, not oklch — M1) to soften the utilitarian flat fill.
+                  background: `linear-gradient(90deg, var(--${tokens[0] ?? "primary"}), color-mix(in srgb, var(--${tokens[0] ?? "primary"}) 80%, var(--card)))`,
+                }}
+              />
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 const CHART_SLOTS = ["blue", "cyan", "amber", "violet", "emerald", "rose"];
 
 /**
@@ -342,6 +398,14 @@ function TokenChart({ spec }: { spec: StatChartSpec }) {
       )}
       {spec.kind === "donut" && (
         <SmoothDonut
+          data={spec.data}
+          indexKey={spec.index ?? "name"}
+          categoryKey={spec.category ?? "value"}
+          tokens={tokens}
+        />
+      )}
+      {spec.kind === "funnel" && (
+        <Funnel
           data={spec.data}
           indexKey={spec.index ?? "name"}
           categoryKey={spec.category ?? "value"}

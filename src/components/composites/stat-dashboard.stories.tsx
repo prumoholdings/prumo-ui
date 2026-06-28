@@ -36,6 +36,20 @@ const donutChart: StatChartSpec = {
   ],
 };
 
+const funnelChart: StatChartSpec = {
+  kind: "funnel",
+  index: "stage",
+  category: "value",
+  colorTokens: ["primary"],
+  title: "Search journey",
+  data: [
+    { stage: "Viewed schools", value: 1240 },
+    { stage: "Opened a detail page", value: 720 },
+    { stage: "Added to compare", value: 410 },
+    { stage: "Booked a tour", value: 168 },
+  ],
+};
+
 const meta: Meta<typeof StatDashboard> = {
   title: "Composites/StatDashboard",
   component: StatDashboard,
@@ -50,6 +64,12 @@ export const WithAreaChart: Story = {
 
 export const WithDonut: Story = {
   args: { kpis: kpis.slice(0, 3), chart: donutChart, columns: 3 },
+};
+
+/** A funnel chart kind — factual stage drop-off (value + conversion %), token-driven
+ * bars, neutral (no good/bad coloring — anti-ranking). */
+export const WithFunnel: Story = {
+  args: { kpis: kpis.slice(0, 3), chart: funnelChart, columns: 3 },
 };
 
 export const KpisOnly: Story = {

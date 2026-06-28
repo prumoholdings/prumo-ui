@@ -3,6 +3,7 @@ import {
   type ColumnDef,
   type SortingState,
   type ColumnFiltersState,
+  type RowSelectionState,
   type RowData,
   flexRender,
   getCoreRowModel,
@@ -15,6 +16,7 @@ import { ArrowDown, ArrowUp, ChevronsUpDown, Search } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { Checkbox } from "../ui/checkbox";
 
 /**
  * DataTable — the RECORD/INTELLIGENCE composite. A generic, token-skinned data
@@ -62,6 +64,11 @@ export interface DataTableProps<TData, TValue> {
   filterPlaceholder?: string;
   /** Optional actions rendered at the right of the toolbar (e.g. Export). */
   toolbarActions?: React.ReactNode;
+  /** Enable row selection — a leading checkbox column + a bulk-action bar. */
+  enableRowSelection?: boolean;
+  /** Rendered in the bulk-action bar when rows are selected; receives the selected
+   * rows' original data. Requires `enableRowSelection`. */
+  bulkActions?: (selectedRows: TData[]) => React.ReactNode;
   /** Rendered when there are zero rows (after filtering). */
   emptyState?: React.ReactNode;
   /** Accessible caption / label for the table. */
@@ -82,6 +89,7 @@ const DT_CSS = `
 .prumo-dt tbody td { border-top: 1px solid color-mix(in oklch, var(--border) 65%, transparent); background: var(--card); }
 .prumo-dt tbody tr:first-child td { border-top: 0; }
 .prumo-dt tbody tr:hover td { background: color-mix(in oklch, var(--muted) 22%, var(--card)); }
+.prumo-dt tbody tr[data-state="selected"] td { background: color-mix(in oklch, var(--primary) 8%, var(--card)); }
 /* per-RECORD card reflow on small screens */
 @media (max-width: 47.99em) {
   .prumo-dt-scroll { overflow-x: visible; border: 0; background: transparent; }
@@ -106,6 +114,8 @@ export function DataTable<TData, TValue>({
   pageSize = 10,
   filterPlaceholder = "Search…",
   toolbarActions,
+  enableRowSelection = false,
+  bulkActions,
   emptyState,
   caption,
   className,
@@ -113,20 +123,58 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+
+  const selectColumn = React.useMemo<ColumnDef<TData, TValue>>(
+    () => ({
+      id: "__select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected()
+              ? true
+              : table.getIsSomePageRowsSelected()
+                ? "indeterminate"
+                : false
+          }
+          onCheckedChange={(v) => table.toggleAllPageRowsSelected(!!v)}
+          aria-label="Select all rows on this page"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(v) => row.toggleSelected(!!v)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      meta: { align: "center" },
+    }),
+    [],
+  );
+  const allColumns = React.useMemo(
+    () => (enableRowSelection ? [selectColumn, ...columns] : columns),
+    [enableRowSelection, selectColumn, columns],
+  );
 
   const table = useReactTable({
     data,
-    columns,
+    columns: allColumns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
+    enableRowSelection,
+    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
-    state: { sorting, columnFilters, globalFilter },
+    state: { sorting, columnFilters, globalFilter, rowSelection },
     initialState: { pagination: { pageSize } },
   });
+
+  const selectedRows = table.getSelectedRowModel().rows;
 
   const rows = table.getRowModel().rows;
   const totalRows = table.getFilteredRowModel().rows.length;
@@ -139,6 +187,34 @@ export function DataTable<TData, TValue>({
   return (
     <div className={cn("prumo-dt w-full", className)}>
       <style>{DT_CSS}</style>
+
+      {enableRowSelection && selectedRows.length > 0 && (
+        <div
+          className="mb-3 flex flex-wrap items-center gap-3 px-3 py-2"
+          style={{
+            borderRadius: "var(--radius-lg)",
+            background: "color-mix(in oklch, var(--primary) 9%, var(--card))",
+            border: "1px solid color-mix(in oklch, var(--primary) 22%, var(--border))",
+          }}
+        >
+          <span className="font-medium text-foreground" style={{ fontSize: "var(--text-small)" }}>
+            {selectedRows.length} selected
+          </span>
+          {bulkActions && (
+            <div className="flex flex-wrap items-center gap-2">
+              {bulkActions(selectedRows.map((r) => r.original))}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => table.resetRowSelection()}
+            className="ml-auto font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:underline"
+            style={{ fontSize: "var(--text-small)" }}
+          >
+            Clear selection
+          </button>
+        </div>
+      )}
 
       {(enableFiltering || toolbarActions) && (
         <div className="mb-3 flex flex-wrap items-center gap-3">
@@ -226,7 +302,7 @@ export function DataTable<TData, TValue>({
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="p-8 text-center text-muted-foreground">
+                <td colSpan={allColumns.length} className="p-8 text-center text-muted-foreground">
                   {emptyState ?? "No results found."}
                 </td>
               </tr>

@@ -120,6 +120,40 @@ export const WithToolbarActions: Story = {
   },
 };
 
+/** Row selection — a leading checkbox column (select-all uses the indeterminate
+ * state) + a bulk-action bar that appears when rows are selected. */
+export const WithSelection: Story = {
+  args: {
+    columns,
+    data,
+    caption: "Companies",
+    enableRowSelection: true,
+    bulkActions: (selected) => {
+      const btn = (label: string) => (
+        <button
+          type="button"
+          className="inline-flex h-8 items-center px-3 font-medium"
+          style={{
+            fontSize: "var(--text-small)",
+            borderRadius: "var(--radius-md)",
+            border: "1px solid var(--border)",
+            background: "var(--card)",
+            color: "var(--foreground)",
+          }}
+        >
+          {label}
+        </button>
+      );
+      return (
+        <>
+          {btn(`Export ${selected.length}`)}
+          {btn("Archive")}
+        </>
+      );
+    },
+  },
+};
+
 export const Empty: Story = {
   args: { columns, data: [], emptyState: "No companies match your filters." },
 };

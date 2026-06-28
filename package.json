@@ -1,6 +1,6 @@
 {
   "name": "@prumo/ui",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": false,
   "description": "Prumo design system: the canonical token contract + token-reading components over shadcn/Tremor/TanStack.",
   "license": "UNLICENSED",

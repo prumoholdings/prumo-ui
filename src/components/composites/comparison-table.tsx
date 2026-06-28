@@ -2,6 +2,7 @@ import * as React from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Check, Minus, Info } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { DURATION, EASE } from "../../lib/motion";
 
 /**
  * ComparisonTable — the INTELLIGENCE composite (the anti-ranking comparator). It
@@ -237,7 +238,7 @@ function MagnitudeBar({
         style={{ background: "var(--primary)" }}
         initial={reduced ? false : { width: 0 }}
         animate={{ width: `${pct * 100}%` }}
-        transition={reduced ? { duration: 0 } : { duration: 0.5, ease: [0.2, 0, 0.38, 0.9] }}
+        transition={reduced ? { duration: 0 } : { duration: DURATION.slow, ease: EASE.standard }}
       />
     </span>
   );

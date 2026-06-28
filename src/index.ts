@@ -20,6 +20,9 @@ import "./tokens.css";
 export * from "./tokens";
 export { cn } from "./lib/utils";
 export { useTokenColors } from "./lib/use-token-colors";
+// JS-side mirror of the CSS motion tokens, for framer-motion-driven animation.
+export { DURATION, EASE } from "./lib/motion";
+export type { Bezier } from "./lib/motion";
 export { TokenSwatch, TokenPalette } from "./components/TokenSwatch";
 export type { TokenSwatchProps, TokenPaletteProps } from "./components/TokenSwatch";
 

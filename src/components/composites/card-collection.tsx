@@ -1,6 +1,7 @@
 import * as React from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "../../lib/utils";
+import { DURATION, EASE } from "../../lib/motion";
 
 /**
  * CardCollection — the ENGAGEMENT composite (feed / listing / search-results /
@@ -11,9 +12,13 @@ import { cn } from "../../lib/utils";
  *   - "list"    single stacked column
  *   - "masonry" CSS columns (variable-height cards, no JS layout)
  *
- * ONE RESPONSIVE LAYOUT each, all pure CSS reflow (no duplicate trees). Item
- * stagger entrance motion via framer-motion, gated on prefers-reduced-motion. A
- * safe empty state. Archetype-generic: any item shape, any card template. Reads
+ * ONE RESPONSIVE LAYOUT each, all pure CSS reflow (no duplicate trees).
+ *
+ * MOTION (purposeful, C8): a SUBTLE item-stagger entrance — this is the
+ * ENGAGEMENT archetype, where a gentle reveal is purposeful (it choreographs the
+ * browse, drawing the eye through the collection), unlike a utilitarian data grid.
+ * Kept subtle (small offset, capped delay), gated on prefers-reduced-motion.
+ * Safe empty state. Archetype-generic: any item shape, any card template. Reads
  * tokens ONLY via var(--*) (gap via --density-gap, min card width via tokens).
  */
 export type CardCollectionLayout = "grid" | "list" | "masonry";
@@ -92,12 +97,12 @@ export function CardCollection<TItem>({
             role="listitem"
             className={isMasonry ? "mb-[var(--density-gap)] break-inside-avoid" : undefined}
             style={isMasonry ? { breakInside: "avoid" } : undefined}
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={
               prefersReducedMotion
                 ? { duration: 0 }
-                : { duration: 0.3, delay: Math.min(i * 0.04, 0.4), ease: [0, 0, 0.38, 0.9] }
+                : { duration: DURATION.base, delay: Math.min(i * 0.035, 0.32), ease: EASE.entrance }
             }
           >
             {renderItem(item, i)}

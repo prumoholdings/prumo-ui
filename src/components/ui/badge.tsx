@@ -9,16 +9,19 @@ import { cn } from "../../lib/utils";
 const badgeVariants = cva(
   cn(
     "inline-flex items-center rounded-sm border px-2.5 py-0.5 font-semibold",
-    "outline-none focus:ring-2 focus:ring-ring",
+    "outline-none focus-visible:ring-2 focus-visible:ring-ring",
   ),
   {
+    // PRIMITIVE grammar: tags/badges are a SOFT TINT fill + matching text (a
+    // low-saturation pill), not a heavy solid block. `solid` stays for emphasis.
     variants: {
       variant: {
-        default: "border-transparent bg-primary text-primary-foreground",
-        secondary: "border-transparent bg-secondary text-secondary-foreground",
-        accent: "border-transparent bg-accent text-accent-foreground",
-        destructive: "border-transparent bg-destructive text-destructive-foreground",
+        default: "border-transparent bg-primary/15 text-foreground",
+        secondary: "border-transparent bg-muted text-foreground",
+        accent: "border-transparent bg-accent/20 text-foreground",
+        destructive: "border-transparent bg-destructive/15 text-destructive",
         outline: "text-foreground border-border",
+        solid: "border-transparent bg-primary text-primary-foreground",
       },
     },
     defaultVariants: { variant: "default" },

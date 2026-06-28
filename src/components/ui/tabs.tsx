@@ -31,14 +31,14 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "inline-flex min-h-[36px] items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 font-medium outline-none",
-      "focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
-      "data-[state=active]:bg-background data-[state=active]:text-foreground",
+      "inline-flex min-h-[36px] items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 font-medium text-muted-foreground outline-none",
+      "transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+      // the ACTIVE tab lifts off the muted track (shadow on active only, not every trigger).
+      "data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:[box-shadow:var(--shadow-sm)]",
       className,
     )}
     style={{
       fontSize: "var(--text-small)",
-      boxShadow: "var(--shadow-sm)",
       transition: "background-color var(--duration-fast) var(--ease-standard)",
       ...style,
     }}

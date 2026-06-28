@@ -44,3 +44,6 @@ export type { PageHeaderProps } from "./page-header";
 
 export { FilterBar } from "./filter-bar";
 export type { FilterBarProps, ActiveFilter } from "./filter-bar";
+
+export { DetailView } from "./detail-view";
+export type { DetailViewProps, DetailSection, DetailFact } from "./detail-view";

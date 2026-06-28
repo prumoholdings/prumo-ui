@@ -38,7 +38,7 @@ Import the token CSS once at app root: `import "@prumo/ui/tokens.css";`
 | `CardCollection` | ENGAGEMENT | Feed / listing / search-results / gallery / catalog; `renderItem` template + `layout` (`grid \| list \| masonry`) | auto-fill grid / stacked / CSS columns — all pure CSS reflow | item-stagger on mount |
 | `StatDashboard` | INTELLIGENCE | KPI stat-card grid (label / big number / **neutral** factual delta / on-brand smooth **sparkline**) + chart (Tremor area/bar/line + a **custom SVG donut**) | responsive KPI grid (1→N cols); smooth `monotone` curves; charts **painted from brand tokens** (Tremor can't take oklch) | subtle KPI reveal-stagger; smooth curves + gradient fades; anti-ranking neutral delta |
 | `Board` | ACTION | Kanban / pipeline; **flat** columns (title + muted count + optional ＋), generic `renderCard`, keyboard move buttons (≥44px, a11y) | horizontal columns desktop (right **edge-fade** on scroll) → **vertical stack** mobile (single DOM) | **first-mount-only** card-stagger (never replays on move) |
-| `FormWizard` | ACTION | Multi-step form; generic field schema (`text \| number \| textarea \| select \| checkbox \| radio`), progress + next/back/validate/submit | progress reflows; fieldset/legend per step | step fade on advance |
+| `FormWizard` | ACTION | Multi-step form (card panel); generic field schema (`text \| number \| textarea \| select \| checkbox \| radio`), numbered **stepper** (progress-filled) + "Step X of Y" eyebrow, validate→next/back, a11y (fieldset/legend, role=alert) | comfortable measure (`max-w-2xl`); progress reflows; single DOM | per-step **continuity** fade (tokenized) |
 
 ### Composite prop entry points
 

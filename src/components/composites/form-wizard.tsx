@@ -2,6 +2,7 @@ import * as React from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Check } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { DURATION, EASE } from "../../lib/motion";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
@@ -129,7 +130,10 @@ export function FormWizard({
 
   return (
     <form
-      className={cn("w-full", className)}
+      // a comfortable single-column measure by default (overridable via className);
+      // a form with edge-to-edge inputs reads unconsidered (C7).
+      className={cn("w-full max-w-2xl border border-border bg-card", className)}
+      style={{ borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)", padding: "1.75rem" }}
       noValidate
       onSubmit={(e) => {
         e.preventDefault();
@@ -165,7 +169,11 @@ export function FormWizard({
                 {s.title}
               </span>
               {i < steps.length - 1 && (
-                <span aria-hidden="true" className="mx-1 h-px w-6 bg-border" />
+                <span
+                  aria-hidden="true"
+                  className="mx-1 h-px w-6"
+                  style={{ background: i < stepIdx ? "var(--primary)" : "var(--border)" }}
+                />
               )}
             </li>
           );
@@ -175,12 +183,24 @@ export function FormWizard({
       <motion.fieldset
         key={step.id}
         className="m-0 border-0 p-0"
-        initial={prefersReducedMotion ? false : { opacity: 0, x: 12 }}
+        initial={prefersReducedMotion ? false : { opacity: 0, x: 10 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.3, ease: [0, 0, 0.38, 0.9] }}
+        transition={prefersReducedMotion ? { duration: 0 } : { duration: DURATION.base, ease: EASE.entrance }}
       >
-        <legend className="mb-1 font-semibold text-foreground" style={{ fontSize: "var(--text-h3)", fontFamily: "var(--font-display)" }}>
-          {step.title}
+        <legend className="mb-2 w-full">
+          <span
+            aria-hidden="true"
+            className="mb-1 block font-semibold uppercase text-muted-foreground"
+            style={{ fontSize: "var(--text-small)", letterSpacing: "0.05em" }}
+          >
+            Step {stepIdx + 1} of {steps.length}
+          </span>
+          <span
+            className="block font-semibold text-foreground"
+            style={{ fontSize: "var(--text-h3)", fontFamily: "var(--font-display)" }}
+          >
+            {step.title}
+          </span>
         </legend>
         {step.description && (
           <p className="mb-4 text-muted-foreground" style={{ fontSize: "var(--text-small)" }}>
@@ -188,7 +208,7 @@ export function FormWizard({
           </p>
         )}
 
-        <div className="grid gap-4">
+        <div className="grid gap-5">
           {step.fields.map((f) => {
             const fieldId = `fw-${step.id}-${f.name}`;
             const errId = `${fieldId}-err`;

@@ -1,49 +1,71 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { FormWizard, type WizardStep } from "./form-wizard";
 
+/* A believable ACTION wizard — booking a school tour (coherent with the schools
+ * domain across the catalog). Generic field schema; the component is archetype-
+ * generic. */
 const steps: WizardStep[] = [
   {
-    id: "account",
-    title: "Account",
-    description: "Tell us who you are.",
+    id: "details",
+    title: "Your details",
+    description: "We'll use these to confirm your visit.",
     fields: [
-      { name: "name", label: "Full name", type: "text", required: true, placeholder: "Ada Lovelace" },
+      { name: "parent", label: "Your name", type: "text", required: true, placeholder: "e.g. Amara Okafor" },
       { name: "email", label: "Email", type: "text", required: true, placeholder: "you@example.com" },
+      { name: "phone", label: "Phone", type: "text", placeholder: "Optional", hint: "In case we need to reach you on the day." },
     ],
   },
   {
-    id: "prefs",
-    title: "Preferences",
-    description: "Configure your workspace.",
+    id: "visit",
+    title: "Visit preferences",
+    description: "Which school, and when suits you.",
     fields: [
       {
-        name: "plan",
-        label: "Plan",
+        name: "school",
+        label: "School",
         type: "select",
         required: true,
+        placeholder: "Choose a school",
         options: [
-          { label: "Starter", value: "starter" },
-          { label: "Pro", value: "pro" },
-          { label: "Enterprise", value: "enterprise" },
+          { label: "Greenfields Primary", value: "greenfields" },
+          { label: "St Mary's CE Primary", value: "stmarys" },
+          { label: "Riverside Academy", value: "riverside" },
+          { label: "Oakwood Primary", value: "oakwood" },
         ],
       },
       {
-        name: "channel",
-        label: "Preferred channel",
-        type: "radio",
+        name: "year",
+        label: "Year group",
+        type: "select",
+        required: true,
+        placeholder: "Select year group",
         options: [
-          { label: "Email", value: "email" },
-          { label: "Slack", value: "slack" },
+          { label: "Reception", value: "reception" },
+          { label: "Year 1", value: "y1" },
+          { label: "Year 2", value: "y2" },
+          { label: "Year 3", value: "y3" },
         ],
       },
-      { name: "bio", label: "About you", type: "textarea", placeholder: "A few words…", hint: "Optional" },
+      {
+        name: "day",
+        label: "Preferred day",
+        type: "radio",
+        required: true,
+        options: [
+          { label: "Weekday morning", value: "am" },
+          { label: "Weekday afternoon", value: "pm" },
+          { label: "Open day (Saturday)", value: "open" },
+        ],
+      },
+      { name: "notes", label: "Anything to tell us?", type: "textarea", placeholder: "Accessibility needs, questions…", hint: "Optional" },
     ],
   },
   {
     id: "confirm",
     title: "Confirm",
+    description: "Almost done.",
     fields: [
-      { name: "terms", label: "I accept the terms", type: "checkbox", required: true },
+      { name: "consent", label: "I'm happy to be contacted about this visit", type: "checkbox", required: true },
     ],
   },
 ];

@@ -41,3 +41,6 @@ export type {
 
 export { PageHeader } from "./page-header";
 export type { PageHeaderProps } from "./page-header";
+
+export { FilterBar } from "./filter-bar";
+export type { FilterBarProps, ActiveFilter } from "./filter-bar";

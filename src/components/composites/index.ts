@@ -47,3 +47,12 @@ export type { FilterBarProps, ActiveFilter } from "./filter-bar";
 
 export { DetailView } from "./detail-view";
 export type { DetailViewProps, DetailSection, DetailFact } from "./detail-view";
+
+export { EmptyState } from "./empty-state";
+export type { EmptyStateProps } from "./empty-state";
+
+export { Timeline } from "./timeline";
+export type { TimelineProps, TimelineEntry } from "./timeline";
+
+export { FileUpload } from "./file-upload";
+export type { FileUploadProps, UploadFile } from "./file-upload";

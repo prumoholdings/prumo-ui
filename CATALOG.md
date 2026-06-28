@@ -42,6 +42,9 @@ Import the token CSS once at app root: `import "@prumo/ui/tokens.css";`
 | `PageHeader` | all (layout) | The screen header (Phase 64 CREATED): breadcrumb/eyebrow + editorial display **title** + description + a **sourced meta strip** (provenance wedge) + **actions-right**; optional tab row (children) + hairline divider | title-left + actions-right; actions wrap below the title on mobile (single DOM); `<header>` landmark, prop-controlled heading level | static |
 | `FilterBar` | RECORD · ENGAGEMENT | The discover toolbar (Phase 64 CREATED): search + a filter-control/adder slot + removable **active-filter chips** (`{id,label,name,onRemove}[]`) + Clear-all + result count + a NEUTRAL sort (distance/name, never a quality rank — anti-ranking) | single flex-wrap toolbar; filters/chips wrap on mobile (single DOM); `role=search`, `aria-live` count, remove-chip aria-labels | static |
 | `DetailView` | RECORD · INTELLIGENCE | The decide page (Phase 64 CREATED): `header` (PageHeader) + `media` hero + grouped **sourced** label·value fact `sections` (semantic `<dl>`, hairline dividers) + sticky actions/summary **aside** + a provenance footer. NO aggregate score/grade/verdict (anti-ranking) | main + sticky aside (stacks on mobile, single DOM) | static |
+| `EmptyState` | all | The no-items placeholder (Phase 64 CREATED): centered muted icon chip + title + one-line description + optional CTA(s); `size` sm/default. Promotes the inline composite empty-pattern into one reusable primitive; never a blank/skeleton | centered stack | static · `role=status` |
+| `Timeline` | ACTION · ENGAGEMENT | A vertical activity/history feed (Phase 64 CREATED): a 1px rail + per-entry icon/dot node + title + `<time>` + description. Neutral nodes (status color reserved for genuine status) | semantic `<ol>/<li>` | static |
+| `FileUpload` | ACTION | A drag-and-drop upload (Phase 64 CREATED): dashed dropzone (real `<button>` + drag-active `--ring`) + hidden input + a file list (icon · name · size · `--primary` progress · remove). a11y: labelled button, `role=progressbar`, remove aria-labels | stacked | drag-active transition |
 
 ### Composite prop entry points
 
@@ -80,7 +83,9 @@ contract. Grouped by role.
 
 ### Overlays & menus
 `Dialog` · `AlertDialog` · `Sheet` · `Drawer` · `Popover` · `HoverCard` ·
-`Tooltip` · `DropdownMenu` · `ContextMenu` · `Command`
+`Tooltip` · `DropdownMenu` · `ContextMenu` · `Command` · `Toast` (+ `Toaster` /
+`useToast` / `toast()` — Phase 64 CREATED; status icon + title + desc + action +
+close, `destructive` variant, bottom-corner stacked, token surface/motion)
 
 ---
 

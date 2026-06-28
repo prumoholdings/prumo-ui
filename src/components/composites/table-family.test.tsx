@@ -131,8 +131,8 @@ describe("ComparisonTable", () => {
     expect(screen.getByText("22%")).toBeInTheDocument();
     // count renders the muted unit suffix
     expect(screen.getByText("pupils")).toBeInTheDocument();
-    // badge category renders its label as a real pill
-    expect(screen.getByText("Outstanding")).toBeInTheDocument();
+    // badge category renders its label as a real pill (and again in the legend)
+    expect(screen.getAllByText("Outstanding").length).toBeGreaterThan(0);
     // the rich cues stay axe-clean
     expect(await axe(container)).toHaveNoViolations();
   });
@@ -145,9 +145,11 @@ describe("ComparisonTable", () => {
       { id: "c", name: "C", values: { ofsted: "Requires Improvement" } },
     ];
     render(<ComparisonTable entities={ents} attributes={attrs} />);
-    // all three categories render as pills; tone is categorical (no success/danger token)
+    // all three categories render as pills; tone is categorical (no success/danger token).
+    // Each label also appears in the legend, so take the first match (the in-cell pill,
+    // which precedes the legend in DOM order).
     for (const label of ["Outstanding", "Good", "Requires Improvement"]) {
-      const pill = screen.getByText(label);
+      const pill = screen.getAllByText(label)[0];
       expect(pill).toBeInTheDocument();
       expect(pill.className).not.toMatch(/destructive|success|danger|green|red/);
     }

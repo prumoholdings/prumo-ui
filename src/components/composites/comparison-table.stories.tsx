@@ -4,93 +4,65 @@ import {
   ComparisonTable,
   type ComparisonAttribute,
   type ComparisonEntity,
+  type ComparisonGroup,
 } from "./comparison-table";
 
-/* The canonical "compare schools" use-case the chairman reviewed — anti-ranking:
- * every cell shows magnitude/category FACTUALLY (meter, bar, pill, colored
- * yes/no) without a good/bad verdict and without sorting by any value. */
+/* The canonical "compare schools" use-case — anti-ranking: every cell shows
+ * magnitude/category FACTUALLY (meter, bar, category pill, yes/no) without a
+ * good/bad verdict and without sorting by any value. Entities are COLUMNS;
+ * attributes are ROWS; the label column is FROZEN and the header is STICKY. */
 const attributes: ComparisonAttribute[] = [
-  { id: "ofsted", label: "Ofsted rating", format: "badge", hint: "most recent inspection" },
-  { id: "classSize", label: "Class size", format: "count", unit: "pupils" },
-  { id: "progress", label: "Progress score", format: "score", scoreMax: 10 },
-  { id: "freeMeals", label: "Free school meals", format: "percent" },
-  { id: "sen", label: "SEN unit", format: "check" },
-  { id: "breakfast", label: "Breakfast club", format: "check" },
-  { id: "distance", label: "Catchment distance", format: "text", hint: "from postcode" },
+  { id: "ofsted", label: "Ofsted rating", format: "badge", hint: "Latest inspection", group: "quality" },
+  { id: "progress", label: "Progress score", format: "score", scoreMax: 10, hint: "Out of 10", group: "quality" },
+  { id: "classSize", label: "Class size", format: "count", unit: "pupils", hint: "Avg. per class", group: "intake" },
+  { id: "freeMeals", label: "Free school meals", format: "percent", hint: "% of pupils", group: "intake" },
+  { id: "sen", label: "SEN support", format: "check", hint: "On-site provision", group: "facilities" },
+  { id: "breakfast", label: "Breakfast club", format: "check", hint: "Before school", group: "facilities" },
+  { id: "distance", label: "Catchment distance", format: "text", hint: "From postcode", group: "intake" },
+];
+
+const groups: ComparisonGroup[] = [
+  { id: "quality", label: "Quality & outcomes", description: "Inspection category and measured progress" },
+  { id: "intake", label: "Intake & access", description: "Who attends and how close" },
+  { id: "facilities", label: "Facilities", description: "On-site provision" },
 ];
 
 const entities: ComparisonEntity[] = [
   {
+    id: "greenfields",
+    name: "Greenfields Primary",
+    subtitle: "Community",
+    values: { ofsted: "Outstanding", progress: 8.4, classSize: 27, freeMeals: 22, sen: true, breakfast: true, distance: "0.4 mi" },
+  },
+  {
     id: "stmarys",
-    name: "St Mary's CofE",
-    subtitle: "Primary",
-    values: {
-      ofsted: "Outstanding",
-      classSize: 24,
-      progress: 8.4,
-      freeMeals: 22,
-      sen: true,
-      breakfast: true,
-      distance: "0.4 mi",
-    },
+    name: "St Mary's CE Primary",
+    subtitle: "Voluntary aided",
+    values: { ofsted: "Good", progress: 7.1, classSize: 30, freeMeals: 14, sen: true, breakfast: false, distance: "0.6 mi" },
   },
   {
-    id: "oakfield",
-    name: "Oakfield Academy",
-    subtitle: "Community",
-    values: {
-      ofsted: "Good",
-      classSize: 27,
-      progress: 7.1,
-      freeMeals: 31,
-      sen: false,
-      breakfast: true,
-      distance: "1.1 mi",
-    },
-  },
-  {
-    id: "rivers",
-    name: "Riverside Primary",
-    subtitle: "Foundation",
-    values: {
-      ofsted: "Requires Improvement",
-      classSize: 30,
-      progress: 5.6,
-      freeMeals: 44,
-      sen: true,
-      breakfast: false,
-      distance: "0.8 mi",
-    },
-  },
-  {
-    id: "elmwood",
-    name: "Elmwood Park",
-    subtitle: "Community",
-    values: {
-      ofsted: "Good",
-      classSize: 26,
-      progress: 6.9,
-      freeMeals: 18,
-      sen: false,
-      breakfast: false,
-      distance: "1.6 mi",
-    },
-  },
-  {
-    id: "hollybank",
-    name: "Hollybank Junior",
+    id: "riverside",
+    name: "Riverside Academy",
     subtitle: "Academy",
-    values: {
-      ofsted: "Outstanding",
-      classSize: 22,
-      progress: 8.9,
-      freeMeals: 12,
-      sen: true,
-      breakfast: true,
-      distance: "2.3 mi",
-    },
+    values: { ofsted: "Good", progress: 6.8, classSize: 26, freeMeals: 31, sen: true, breakfast: true, distance: "0.8 mi" },
+  },
+  {
+    id: "oakwood",
+    name: "Oakwood Primary",
+    subtitle: "Community",
+    values: { ofsted: "Requires improvement", progress: 5.2, classSize: 25, freeMeals: 38, sen: false, breakfast: false, distance: "1.1 mi" },
+  },
+  {
+    id: "willows",
+    name: "The Willows School",
+    subtitle: "Foundation",
+    values: { ofsted: "Outstanding", progress: 9.1, classSize: 28, freeMeals: 9, sen: true, breakfast: true, distance: "0.5 mi" },
   },
 ];
+
+const FOOTNOTE =
+  "An anti-ranking comparison: tones and icons are categorical, never good/bad. " +
+  "Ofsted ratings show inspection category only; ✓/– mark presence of a service, not quality.";
 
 const meta: Meta<typeof ComparisonTable> = {
   title: "Composites/ComparisonTable",
@@ -100,19 +72,67 @@ const meta: Meta<typeof ComparisonTable> = {
 export default meta;
 type Story = StoryObj<typeof ComparisonTable>;
 
-/** Entities as columns, attributes as rows. Each cell renders a VISUAL CUE
- * (meter / bar / category pill / colored yes-no) — never flat text. Below ~768px
- * the SAME matrix reflows to per-attribute cards (one DOM tree, no h-scroll),
- * each value carrying its school's identity dot + monogram. */
+/** The full matrix — entities as columns, attributes as rows, label column frozen
+ * left, header sticky on scroll. Each cell renders a VISUAL CUE (meter / bar /
+ * category pill / yes-no) — never flat text. */
 export const Default: Story = {
   args: { entities, attributes, caption: "Compare local primary schools" },
 };
 
-/** The mobile card reflow the chairman will review on a phone: per-attribute
- * cards, each school on its own line with a deterministic identity chip so you
- * can track one school down the groups. */
+/** The approved "Variant A" composition — editorial header + sourced provenance +
+ * the anti-ranking legend/footnote. This is the craft target. */
+export const VariantA: Story = {
+  args: {
+    entities,
+    attributes,
+    eyebrow: "Primary school comparison",
+    title: "Five schools, side by side — without the league table.",
+    description:
+      "A calm, scannable matrix for catchment-area families. We surface the facts and let you weigh them — no scores, no rankings, no verdicts.",
+    sources: "Sources: Ofsted reports · DfE performance tables · school census 2025",
+    footnote: FOOTNOTE,
+    caption: "Compare local primary schools",
+  },
+};
+
+/** Category-grouped: attributes fold under spanning group headers (Quality /
+ * Intake / Facilities) for scannability on dense comparisons. */
+export const Grouped: Story = {
+  args: {
+    entities,
+    attributes,
+    groups,
+    eyebrow: "Primary school comparison",
+    title: "Five schools, grouped by what matters.",
+    footnote: FOOTNOTE,
+    caption: "Compare local primary schools, grouped",
+  },
+};
+
+/** With controls — a Key/All subset toggle + a Comfortable/Compact density
+ * toggle. Defaults to the key subset. */
+export const WithControls: Story = {
+  args: {
+    entities,
+    attributes,
+    keyAttributeIds: ["ofsted", "progress", "distance"],
+    enableDensityToggle: true,
+    caption: "Compare local primary schools",
+  },
+};
+
+/** Mobile: the SAME matrix — the label column stays frozen and the school columns
+ * scroll horizontally (~2 visible) with a right-edge fade + swipe hint. One DOM,
+ * no per-attribute cards, no h-scroll-vs-stacked dual tree. */
 export const Mobile: Story = {
-  args: { entities, attributes, caption: "Compare local primary schools" },
+  args: {
+    entities,
+    attributes,
+    eyebrow: "School comparison",
+    title: "Five schools, side by side.",
+    footnote: FOOTNOTE,
+    caption: "Compare local primary schools",
+  },
   parameters: {
     viewport: { viewports: INITIAL_VIEWPORTS, defaultViewport: "iphone12" },
     layout: "fullscreen",
@@ -134,9 +154,9 @@ export const SparseData: Story = {
   },
 };
 
-/** The same ComparisonTable under a WARM vs SHARP token skin — every cue
- * (meters, bars, pills, identity chips) retunes to the per-concept palette
- * because they all read var(--*) only. */
+/** The same ComparisonTable under a WARM vs SHARP token skin — every cue (meters,
+ * bars, pills, identity chips) retunes to the per-concept palette because they all
+ * read var(--*) only. */
 export const WarmVsSharp: Story = {
   render: () => (
     <div style={{ display: "grid", gap: "var(--space-stack)" }}>

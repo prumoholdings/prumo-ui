@@ -191,7 +191,7 @@ export function DataTable<TData, TValue>({
                           type="button"
                           onClick={header.column.getToggleSortingHandler()}
                           className={cn(
-                            "inline-flex min-h-[36px] items-center gap-1.5 font-semibold uppercase outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring rounded-sm",
+                            "inline-flex min-h-[44px] items-center gap-1.5 font-semibold uppercase outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring rounded-sm",
                             align === "right" && "flex-row-reverse",
                           )}
                           style={{

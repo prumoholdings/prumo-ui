@@ -11,7 +11,9 @@ interface Row {
 
 /** Status as a CALM, equal-weight pill differentiated by a muted hue dot (not a
  * solid→tint→ghost prominence ladder) — categorical identity, anti-ranking (C5b). */
-const STATUS_HUE: Record<Row["status"], number> = { active: 0, paused: 120, archived: 230 };
+/* Calm, well-separated identity hues that avoid landing on red for any status
+ * (anti-ranking — a status is categorical, not a verdict). */
+const STATUS_HUE: Record<Row["status"], number> = { active: 0, paused: 150, archived: 240 };
 function StatusPill({ status }: { status: Row["status"] }) {
   return (
     <span

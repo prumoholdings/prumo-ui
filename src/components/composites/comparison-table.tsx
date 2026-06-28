@@ -219,11 +219,11 @@ function CategoryPill({ value, hueOffset }: { value: string; hueOffset: number }
  * ------------------------------------------------------------------------- */
 function MagnitudeBar({
   fraction,
-  reduced,
+  animate,
   width = "4.75rem",
 }: {
   fraction: number;
-  reduced: boolean | null;
+  animate: boolean;
   width?: string;
 }) {
   const pct = Math.max(0, Math.min(1, fraction));
@@ -236,9 +236,9 @@ function MagnitudeBar({
       <motion.span
         className="absolute left-0 top-0 h-full rounded-full"
         style={{ background: "var(--primary)" }}
-        initial={reduced ? false : { width: 0 }}
+        initial={animate ? { width: 0 } : false}
         animate={{ width: `${pct * 100}%` }}
-        transition={reduced ? { duration: 0 } : { duration: DURATION.slow, ease: EASE.standard }}
+        transition={animate ? { duration: DURATION.slow, ease: EASE.standard } : { duration: 0 }}
       />
     </span>
   );
@@ -247,12 +247,12 @@ function MagnitudeBar({
 function CellValue({
   value,
   attr,
-  reduced,
+  animate,
   catHue,
 }: {
   value: ComparisonEntity["values"][string];
   attr: ComparisonAttribute;
-  reduced: boolean | null;
+  animate: boolean;
   catHue: Map<string, number>;
 }): React.ReactElement {
   const fmt = attr.format ?? "text";
@@ -305,7 +305,7 @@ function CellValue({
       return (
         <span className="inline-flex items-center gap-2">
           <span className="sr-only">{finite ? `${num} out of ${max}` : String(value)}</span>
-          <MagnitudeBar fraction={fraction} reduced={reduced} />
+          <MagnitudeBar fraction={fraction} animate={animate} />
           <span className="tabular-nums font-semibold text-foreground" aria-hidden="true">
             {finite ? num : String(value)}
             <span className="font-normal text-muted-foreground">/{max}</span>
@@ -321,7 +321,7 @@ function CellValue({
       return (
         <span className="inline-flex items-center gap-2">
           <span className="sr-only">{finite ? `${num} percent` : String(value)}</span>
-          <MagnitudeBar fraction={fraction} reduced={reduced} />
+          <MagnitudeBar fraction={fraction} animate={animate} />
           <span className="tabular-nums font-semibold text-foreground" aria-hidden="true">
             {finite ? `${num}%` : String(value)}
           </span>
@@ -433,6 +433,14 @@ export function ComparisonTable({
   const [dens, setDens] = React.useState<ComparisonDensity>(density);
   const hasKeySubset = !!keyAttributeIds && keyAttributeIds.length > 0;
   const [showKeyOnly, setShowKeyOnly] = React.useState<boolean>(hasKeySubset);
+
+  // C8: play the entrance reveal ONCE (first mount), never replaying it when the
+  // Key/All or density toggles re-render — a reveal is for arrival, not interaction.
+  const firstRenderRef = React.useRef(true);
+  React.useEffect(() => {
+    firstRenderRef.current = false;
+  }, []);
+  const playEntrance = !prefersReducedMotion && firstRenderRef.current;
 
   if (entities.length === 0 || attributes.length === 0) {
     return (
@@ -564,7 +572,7 @@ export function ComparisonTable({
 
       <div className="prumo-ct-scroll">
         <table
-          className={cn(!prefersReducedMotion && "prumo-ct-anim")}
+          className={cn(playEntrance && "prumo-ct-anim")}
           style={{ fontSize: "var(--text-small)" }}
         >
           {caption && <caption className="sr-only">{caption}</caption>}
@@ -637,7 +645,7 @@ export function ComparisonTable({
                   {entities.map((e) => (
                     <td key={e.id}>
                       <span className="prumo-ct-cell-in" style={inStyle}>
-                        <CellValue value={e.values[attr.id]} attr={attr} reduced={prefersReducedMotion} catHue={catHue} />
+                        <CellValue value={e.values[attr.id]} attr={attr} animate={playEntrance} catHue={catHue} />
                       </span>
                     </td>
                   ))}

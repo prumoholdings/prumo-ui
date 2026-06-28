@@ -33,7 +33,7 @@ Import the token CSS once at app root: `import "@prumo/ui/tokens.css";`
 
 | Component | Archetype | Purpose | Responsive strategy | Motion |
 | --- | --- | --- | --- | --- |
-| `DataTable` | RECORD · INTELLIGENCE | Generic grid (TanStack): column defs, sorting, global filter, pagination | real `<table>` desktop → per-row **stacked cards** on mobile (single DOM, `data-label` cells) | row-stagger on mount |
+| `DataTable` | RECORD · INTELLIGENCE | Generic grid (TanStack): sortable columns (`meta.align` right-aligns numerics), global filter, pagination, search + live-count toolbar + actions slot | efficient dense grid, **sticky header**, hairline rows (no zebra); mobile = per-**record** cards (title + labelled rows, single DOM) | feedback-only (hover/sort transitions); NO entrance choreography (C8 — a grid shouldn't stagger every page) |
 | `ComparisonTable` | INTELLIGENCE | Anti-ranking comparator: N entities × M attributes; cell formats `text \| badge \| score \| percent \| check \| count \| currency`; optional category groups, Key/All + density toggles, editorial header + sourced legend | true matrix, **frozen label column** + **sticky header**; mobile = frozen anchor + **horizontal-scroll** of entity columns + edge-fade + swipe (single DOM, no card-restack) | row-stagger on mount |
 | `CardCollection` | ENGAGEMENT | Feed / listing / search-results / gallery / catalog; `renderItem` template + `layout` (`grid \| list \| masonry`) | auto-fill grid / stacked / CSS columns — all pure CSS reflow | item-stagger on mount |
 | `StatDashboard` | INTELLIGENCE | KPI stat-card grid + optional chart (Tremor: area/bar/line/donut) | responsive KPI grid (1→N cols); charts fluid | KPI-stagger on mount; chart colors read tokens via `useTokenColors` |

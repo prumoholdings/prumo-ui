@@ -2,10 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { StatDashboard, type StatChartSpec } from "./stat-dashboard";
 
 const kpis = [
-  { label: "Revenue", value: "$48.2k", deltaPct: 12.4, hint: "vs last month" },
-  { label: "Active users", value: "3,910", deltaPct: 4.1, hint: "7-day" },
-  { label: "Churn", value: "1.8%", deltaPct: -0.6, hint: "improving" },
-  { label: "NPS", value: "62", deltaPct: 8.0 },
+  { label: "Revenue", value: "$48.2k", deltaPct: 12.4, spark: [32, 35, 33, 41, 39, 45, 48], hint: "vs last month" },
+  { label: "Active users", value: "3,910", deltaPct: 4.1, spark: [3.4, 3.5, 3.6, 3.55, 3.7, 3.85, 3.91], hint: "7-day average" },
+  { label: "Churn", value: "1.8%", deltaPct: -0.6, spark: [2.6, 2.5, 2.3, 2.2, 2.0, 1.9, 1.8], hint: "down 0.6pts — improving" },
+  { label: "NPS", value: "62", deltaPct: 8.0, spark: [54, 55, 57, 56, 59, 61, 62], hint: "rolling 90-day" },
 ];
 
 const areaChart: StatChartSpec = {

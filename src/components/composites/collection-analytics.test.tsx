@@ -58,9 +58,9 @@ describe("StatDashboard", () => {
     expect(screen.getByRole("region", { name: "Metrics" })).toBeInTheDocument();
     expect(screen.getByText("Revenue")).toBeInTheDocument();
     expect(screen.getByText("$10k")).toBeInTheDocument();
-    // delta direction is exposed to AT
-    expect(screen.getByText("increase")).toBeInTheDocument();
-    expect(screen.getByText("decrease")).toBeInTheDocument();
+    // delta direction is exposed to AT (factual, neutral — not good/bad)
+    expect(screen.getByText("up from the previous period")).toBeInTheDocument();
+    expect(screen.getByText("down from the previous period")).toBeInTheDocument();
     expect(await axe(container)).toHaveNoViolations();
   });
 

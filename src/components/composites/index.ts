@@ -38,3 +38,6 @@ export type {
   WizardValues,
   FieldType,
 } from "./form-wizard";
+
+export { PageHeader } from "./page-header";
+export type { PageHeaderProps } from "./page-header";

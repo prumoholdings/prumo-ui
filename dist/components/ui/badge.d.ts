@@ -5,7 +5,7 @@ import * as React from "react";
  * `--radius-sm`. No hardcoded color/radius.
  */
 declare const badgeVariants: (props?: ({
-    variant?: "secondary" | "accent" | "destructive" | "default" | "outline" | null | undefined;
+    variant?: "secondary" | "accent" | "destructive" | "solid" | "default" | "outline" | null | undefined;
 } & import('class-variance-authority/types').ClassProp) | undefined) => string;
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {
 }

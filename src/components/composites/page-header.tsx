@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
+import { type ActionSpec, renderActionSpecs } from "./field-specs";
 
 /**
  * PageHeader — the screen's header region (CREATED, not elevated; Phase 64
@@ -22,8 +23,12 @@ export interface PageHeaderProps {
   description?: React.ReactNode;
   /** Rendered above the title (e.g. a Breadcrumb or a back link). */
   breadcrumb?: React.ReactNode;
-  /** Rendered on the right (e.g. secondary + primary Buttons). Wraps on mobile. */
+  /** Rendered on the right (e.g. secondary + primary Buttons). Wraps on mobile.
+   * Takes precedence over `actionSpecs`. */
   actions?: React.ReactNode;
+  /** Declarative actions (Phase 65 data alternative to `actions`, rendered as Buttons,
+   * so a pure-data ScreenPlan can drive the header). Used only when `actions` is absent. */
+  actionSpecs?: ActionSpec[];
   /** A factual strip under the title (counts / location / sourced provenance). */
   meta?: React.ReactNode;
   /** The title heading element — a page header is usually the page `<h1>`. */
@@ -41,6 +46,7 @@ export function PageHeader({
   description,
   breadcrumb,
   actions,
+  actionSpecs,
   meta,
   as: Heading = "h1",
   divider = true,
@@ -83,7 +89,11 @@ export function PageHeader({
           )}
         </div>
 
-        {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
+        {(actions || (actionSpecs && actionSpecs.length > 0)) && (
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
+            {actions ?? renderActionSpecs(actionSpecs)}
+          </div>
+        )}
       </div>
 
       {children && <div className="mt-4">{children}</div>}

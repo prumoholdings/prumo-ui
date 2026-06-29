@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Plus } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { DURATION, EASE } from "../../lib/motion";
+import { type CardSpec, renderCardSpec } from "./field-specs";
 
 /**
  * Board — the ACTION composite (kanban / pipeline / workflow). Renders generic
@@ -37,8 +38,11 @@ export interface BoardColumn<TCard extends BoardCard> {
 
 export interface BoardProps<TCard extends BoardCard> {
   columns: BoardColumn<TCard>[];
-  /** The card template. */
-  renderCard: (card: TCard, column: BoardColumn<TCard>) => React.ReactNode;
+  /** The card template. Takes precedence over `cardSpec`. */
+  renderCard?: (card: TCard, column: BoardColumn<TCard>) => React.ReactNode;
+  /** A declarative card (Phase 65 data alternative to `renderCard`, so a pure-data
+   * ScreenPlan can drive the board). Used only when `renderCard` is absent. */
+  cardSpec?: CardSpec;
   /** Called when a card's move button is pressed; gives the target column id. */
   onMoveCard?: (cardId: string, fromColumnId: string, toColumnId: string) => void;
   /** When provided, a ＋ affordance appears in each column header. */
@@ -54,6 +58,7 @@ export interface BoardProps<TCard extends BoardCard> {
 export function Board<TCard extends BoardCard>({
   columns,
   renderCard,
+  cardSpec,
   onMoveCard,
   onAddCard,
   emptyColumnText = "No items",
@@ -62,6 +67,12 @@ export function Board<TCard extends BoardCard>({
   "aria-label": ariaLabel,
 }: BoardProps<TCard>) {
   const prefersReducedMotion = useReducedMotion();
+  const renderOneCard = (card: TCard, col: BoardColumn<TCard>): React.ReactNode =>
+    renderCard
+      ? renderCard(card, col)
+      : cardSpec
+        ? renderCardSpec(cardSpec, card as Record<string, unknown>)
+        : null;
   const firstRenderRef = React.useRef(true);
   React.useEffect(() => {
     firstRenderRef.current = false;
@@ -163,7 +174,7 @@ export function Board<TCard extends BoardCard>({
                         : { duration: 0 }
                     }
                   >
-                    {renderCard(card, col)}
+                    {renderOneCard(card, col)}
                     {onMoveCard && (prev || next) && (
                       <div className="mt-2.5 flex justify-end gap-1">
                         {prev && (

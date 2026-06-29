@@ -5,6 +5,30 @@
  * built-in motion gated on reduced-motion, a safe empty state, and is fully
  * archetype-generic. See CATALOG.md.
  */
+// Phase 65 — declarative field-specs (data alternatives to the function/node props,
+// so a pure-data ScreenPlan can drive every composite) + the render helpers.
+export {
+  resolveIcon,
+  renderActionSpecs,
+  renderCardSpec,
+  buildColumnsFromSpec,
+  renderFilterSpecs,
+  renderAsideSpec,
+} from "./field-specs";
+export type {
+  ActionSpec,
+  ActionVariant,
+  CardSpec,
+  CardFieldSpec,
+  CardBadgeSpec,
+  BadgeTone,
+  ColumnSpec,
+  ColumnFormat,
+  FilterSpec,
+  AsideSpec,
+  AsideFactSpec,
+} from "./field-specs";
+
 export { DataTable } from "./data-table";
 export type { DataTableProps } from "./data-table";
 

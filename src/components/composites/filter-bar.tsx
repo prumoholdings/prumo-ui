@@ -2,6 +2,7 @@ import * as React from "react";
 import { Search, X } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Input } from "../ui/input";
+import { type FilterSpec, renderFilterSpecs } from "./field-specs";
 
 /**
  * FilterBar — narrow a collection by FACTS (CREATED; Phase 64 creation loop,
@@ -26,8 +27,13 @@ export interface ActiveFilter {
 
 export interface FilterBarProps {
   search?: { value: string; onChange: (value: string) => void; placeholder?: string };
-  /** The consumer's filter controls (Selects / "+ filter" buttons). */
+  /** The consumer's filter controls (Selects / "+ filter" buttons). Takes precedence
+   * over `filterSpecs`. */
   filters?: React.ReactNode;
+  /** Declarative filter controls (Phase 65 data alternative to `filters`, rendered as
+   * search Inputs / Selects, so a pure-data ScreenPlan can drive the bar). Used only
+   * when `filters` is absent. */
+  filterSpecs?: FilterSpec[];
   /** Active filters rendered as removable chips. */
   activeFilters?: ActiveFilter[];
   onClearAll?: () => void;
@@ -45,6 +51,7 @@ export interface FilterBarProps {
 export function FilterBar({
   search,
   filters,
+  filterSpecs,
   activeFilters,
   onClearAll,
   resultCount,
@@ -73,7 +80,11 @@ export function FilterBar({
             />
           </div>
         )}
-        {filters && <div className="flex flex-wrap items-center gap-2">{filters}</div>}
+        {(filters || (filterSpecs && filterSpecs.length > 0)) && (
+          <div className="flex flex-wrap items-center gap-2">
+            {filters ?? renderFilterSpecs(filterSpecs)}
+          </div>
+        )}
         {(resultCount != null || sort || actions) && (
           <div className="ml-auto flex items-center gap-3">
             {resultCount != null && (

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
+import { type AsideSpec, renderAsideSpec } from "./field-specs";
 
 /**
  * DetailView — one entity's full page (CREATED; Phase 64 creation loop, coverage-map
@@ -32,8 +33,11 @@ export interface DetailViewProps {
   /** An optional hero/media block above the sections. */
   media?: React.ReactNode;
   sections: DetailSection[];
-  /** An optional sticky aside (a summary / actions card). */
+  /** An optional sticky aside (a summary / actions card). Takes precedence over `asideSpec`. */
   aside?: React.ReactNode;
+  /** A declarative summary/actions aside (Phase 65 data alternative to `aside`, so a
+   * pure-data ScreenPlan can drive it). Used only when `aside` is absent. */
+  asideSpec?: AsideSpec;
   /** A provenance footer (the sourced wedge). */
   source?: React.ReactNode;
   className?: string;
@@ -45,14 +49,16 @@ export function DetailView({
   media,
   sections,
   aside,
+  asideSpec,
   source,
   className,
   "aria-label": ariaLabel,
 }: DetailViewProps) {
+  const resolvedAside = aside ?? renderAsideSpec(asideSpec);
   return (
     <div className={cn("w-full", className)} aria-label={ariaLabel}>
       {header}
-      <div className={cn("mt-6 grid gap-8", aside && "lg:grid-cols-[minmax(0,1fr)_320px]")}>
+      <div className={cn("mt-6 grid gap-8", resolvedAside && "lg:grid-cols-[minmax(0,1fr)_320px]")}>
         <div className="min-w-0 space-y-8">
           {media}
           {sections.map((s) => (
@@ -104,7 +110,7 @@ export function DetailView({
           )}
         </div>
 
-        {aside && <aside className="h-fit lg:sticky lg:top-4">{aside}</aside>}
+        {resolvedAside && <aside className="h-fit lg:sticky lg:top-4">{resolvedAside}</aside>}
       </div>
     </div>
   );

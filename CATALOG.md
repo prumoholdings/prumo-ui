@@ -64,6 +64,30 @@ Import the token CSS once at app root: `import "@prumo/ui/tokens.css";`
 - `FormWizard` — `steps: WizardStep[]`, `initialValues?`, `onSubmit?`,
   `onChange?`, `emptyState?`.
 
+### Data-driven field-specs (Phase 65 — pure-data alternatives to the render props)
+
+So a pure-**data** `ScreenPlan` can drive every composite, the function/node-prop
+composites accept a declarative DATA alternative (additive, backward-compatible; the
+function/node prop WINS when both are present). All inputs are JSON-serializable
+(string/number/bool/array — NO functions, NO JSX). The render harness just passes these
+as props. Source of truth for the author/validator contract.
+
+- `CardCollection.card?: CardSpec` — `{ title?|titleKey?, subtitleKey?, mediaKey?,
+  fields?: {label,key}[], badges?: {key,tone?}[], actions?: ActionSpec[] }` (item keys
+  resolved per item). Alternative to `renderItem`.
+- `DataTable.columnsSpec?: ColumnSpec[]` — `{ key, header, align?, format?: text|number|
+  currency|percent|badge|date, currency? }[]`. Alternative to `columns`.
+- `PageHeader.actionSpecs?: ActionSpec[]` — alternative to `actions`.
+- `FilterBar.filterSpecs?: FilterSpec[]` — `{ id, kind: search|select, label, options?,
+  placeholder? }[]`. Alternative to `filters`.
+- `DetailView.asideSpec?: AsideSpec` — `{ title?, facts?: {label,value}[],
+  actions?: ActionSpec[] }`. Alternative to `aside`.
+- `Board.cardSpec?: CardSpec` — alternative to `renderCard`.
+- `EmptyState.iconName?: string` (lucide name) + `actionSpec?: ActionSpec` — alternatives
+  to `icon` / `action`.
+- `ActionSpec` — `{ label, variant?: default|secondary|outline|ghost|destructive,
+  icon?: <lucide name>, href? }` (render-only; no handlers).
+
 ---
 
 ## Primitives (the shadcn palette — building blocks for the composites + bespoke screens)

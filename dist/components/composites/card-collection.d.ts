@@ -1,3 +1,4 @@
+import { CardSpec } from './field-specs';
 import * as React from "react";
 /**
  * CardCollection — the ENGAGEMENT composite (feed / listing / search-results /
@@ -8,16 +9,26 @@ import * as React from "react";
  *   - "list"    single stacked column
  *   - "masonry" CSS columns (variable-height cards, no JS layout)
  *
- * ONE RESPONSIVE LAYOUT each, all pure CSS reflow (no duplicate trees). Item
- * stagger entrance motion via framer-motion, gated on prefers-reduced-motion. A
- * safe empty state. Archetype-generic: any item shape, any card template. Reads
+ * ONE RESPONSIVE LAYOUT each, all pure CSS reflow (no duplicate trees).
+ *
+ * MOTION (purposeful, C8): a SUBTLE item-stagger entrance — this is the
+ * ENGAGEMENT archetype, where a gentle reveal is purposeful (it choreographs the
+ * browse, drawing the eye through the collection), unlike a utilitarian data grid.
+ * Kept subtle (small offset, capped delay), gated on prefers-reduced-motion.
+ * Safe empty state. Archetype-generic: any item shape, any card template. Reads
  * tokens ONLY via var(--*) (gap via --density-gap, min card width via tokens).
  */
 export type CardCollectionLayout = "grid" | "list" | "masonry";
 export interface CardCollectionProps<TItem> {
     items: TItem[];
-    /** The card template for one item (a render prop). */
-    renderItem: (item: TItem, index: number) => React.ReactNode;
+    /** The card template for one item (a render prop). Takes precedence over `card`. */
+    renderItem?: (item: TItem, index: number) => React.ReactNode;
+    /**
+     * A declarative card the component renders per item (Phase 65 data alternative to
+     * `renderItem`, so a pure-data ScreenPlan can drive the collection). Used only when
+     * `renderItem` is absent. Items are treated as plain records for field lookup.
+     */
+    card?: CardSpec;
     /** Stable key extractor; defaults to the array index. */
     getKey?: (item: TItem, index: number) => React.Key;
     /** Layout mode. Default "grid". */
@@ -30,4 +41,4 @@ export interface CardCollectionProps<TItem> {
     "aria-label"?: string;
     className?: string;
 }
-export declare function CardCollection<TItem>({ items, renderItem, getKey, layout, minCardWidth, emptyState, "aria-label": ariaLabel, className, }: CardCollectionProps<TItem>): React.JSX.Element;
+export declare function CardCollection<TItem>({ items, renderItem, card, getKey, layout, minCardWidth, emptyState, "aria-label": ariaLabel, className, }: CardCollectionProps<TItem>): React.JSX.Element;

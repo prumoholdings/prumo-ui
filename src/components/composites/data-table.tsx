@@ -17,6 +17,7 @@ import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
+import { type ColumnSpec, buildColumnsFromSpec } from "./field-specs";
 
 /**
  * DataTable — the RECORD/INTELLIGENCE composite. A generic, token-skinned data
@@ -50,8 +51,15 @@ declare module "@tanstack/react-table" {
 
 export interface DataTableProps<TData, TValue> {
   /** TanStack column definitions (header/accessor/cell — fully generic). Set
-   * `meta: { align: "right" }` on numeric/currency columns. */
-  columns: ColumnDef<TData, TValue>[];
+   * `meta: { align: "right" }` on numeric/currency columns. Takes precedence over
+   * `columnsSpec`. */
+  columns?: ColumnDef<TData, TValue>[];
+  /**
+   * Declarative columns (Phase 65 data alternative to `columns`, so a pure-data
+   * ScreenPlan can drive the table). The component builds the TanStack column defs +
+   * format-aware cells from these. Used only when `columns` is absent.
+   */
+  columnsSpec?: ColumnSpec[];
   /** The row data (any shape). */
   data: TData[];
   /** Show the global search box. Default true. */
@@ -108,6 +116,7 @@ const DT_CSS = `
 
 export function DataTable<TData, TValue>({
   columns,
+  columnsSpec,
   data,
   enableFiltering = true,
   enablePagination = true,
@@ -153,9 +162,21 @@ export function DataTable<TData, TValue>({
     }),
     [],
   );
+  // Phase 65: resolve declarative columnsSpec → TanStack defs (columns wins).
+  const resolvedColumns = React.useMemo<ColumnDef<TData, TValue>[]>(
+    () =>
+      columns ??
+      (columnsSpec
+        ? (buildColumnsFromSpec<Record<string, unknown>>(columnsSpec) as unknown as ColumnDef<
+            TData,
+            TValue
+          >[])
+        : []),
+    [columns, columnsSpec],
+  );
   const allColumns = React.useMemo(
-    () => (enableRowSelection ? [selectColumn, ...columns] : columns),
-    [enableRowSelection, selectColumn, columns],
+    () => (enableRowSelection ? [selectColumn, ...resolvedColumns] : resolvedColumns),
+    [enableRowSelection, selectColumn, resolvedColumns],
   );
 
   const table = useReactTable({

@@ -40,4 +40,7 @@ export * from './tabs';
 export * from './textarea';
 export * from './toggle';
 export * from './toggle-group';
+export * from './toast';
+export * from './toaster';
+export * from './use-toast';
 export * from './tooltip';

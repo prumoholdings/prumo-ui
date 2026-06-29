@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
+import { type ActionSpec, resolveIcon, renderActionSpecs } from "./field-specs";
 
 /**
  * EmptyState — the calm placeholder for a collection/table/search with no items
@@ -9,18 +10,33 @@ import { cn } from "../../lib/utils";
  * broken skeleton (no-silent-skeleton). Tokens via var(--*) only.
  */
 export interface EmptyStateProps {
-  /** A lucide (or any) icon node — shown in a soft round chip. */
+  /** A lucide (or any) icon node — shown in a soft round chip. Takes precedence over `iconName`. */
   icon?: React.ReactNode;
+  /** A lucide icon NAME (Phase 65 data alternative to `icon`). Used when `icon` is absent. */
+  iconName?: string;
   title: React.ReactNode;
   description?: React.ReactNode;
-  /** CTA button(s). */
+  /** CTA button(s). Takes precedence over `actionSpec`. */
   action?: React.ReactNode;
+  /** A declarative CTA (Phase 65 data alternative to `action`). Used when `action` is absent. */
+  actionSpec?: ActionSpec;
   /** `sm` for inline-in-card; `default` for a full panel. */
   size?: "sm" | "default";
   className?: string;
 }
 
-export function EmptyState({ icon, title, description, action, size = "default", className }: EmptyStateProps) {
+export function EmptyState({
+  icon,
+  iconName,
+  title,
+  description,
+  action,
+  actionSpec,
+  size = "default",
+  className,
+}: EmptyStateProps) {
+  const resolvedIcon = icon ?? resolveIcon(iconName);
+  const resolvedAction = action ?? (actionSpec ? renderActionSpecs([actionSpec]) : null);
   return (
     <div
       role="status"
@@ -30,7 +46,7 @@ export function EmptyState({ icon, title, description, action, size = "default",
         className,
       )}
     >
-      {icon && (
+      {resolvedIcon && (
         <div
           aria-hidden="true"
           className="mb-4 flex items-center justify-center [&_svg]:h-6 [&_svg]:w-6"
@@ -42,7 +58,7 @@ export function EmptyState({ icon, title, description, action, size = "default",
             color: "var(--muted-foreground)",
           }}
         >
-          {icon}
+          {resolvedIcon}
         </div>
       )}
       <h3 className="font-semibold text-foreground" style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-h3)" }}>
@@ -53,7 +69,9 @@ export function EmptyState({ icon, title, description, action, size = "default",
           {description}
         </p>
       )}
-      {action && <div className="mt-5 flex flex-wrap items-center justify-center gap-2">{action}</div>}
+      {resolvedAction && (
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2">{resolvedAction}</div>
+      )}
     </div>
   );
 }

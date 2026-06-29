@@ -2,6 +2,7 @@ import * as React from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "../../lib/utils";
 import { DURATION, EASE } from "../../lib/motion";
+import { type CardSpec, renderCardSpec } from "./field-specs";
 
 /**
  * CardCollection — the ENGAGEMENT composite (feed / listing / search-results /
@@ -25,8 +26,14 @@ export type CardCollectionLayout = "grid" | "list" | "masonry";
 
 export interface CardCollectionProps<TItem> {
   items: TItem[];
-  /** The card template for one item (a render prop). */
-  renderItem: (item: TItem, index: number) => React.ReactNode;
+  /** The card template for one item (a render prop). Takes precedence over `card`. */
+  renderItem?: (item: TItem, index: number) => React.ReactNode;
+  /**
+   * A declarative card the component renders per item (Phase 65 data alternative to
+   * `renderItem`, so a pure-data ScreenPlan can drive the collection). Used only when
+   * `renderItem` is absent. Items are treated as plain records for field lookup.
+   */
+  card?: CardSpec;
   /** Stable key extractor; defaults to the array index. */
   getKey?: (item: TItem, index: number) => React.Key;
   /** Layout mode. Default "grid". */
@@ -43,6 +50,7 @@ export interface CardCollectionProps<TItem> {
 export function CardCollection<TItem>({
   items,
   renderItem,
+  card,
   getKey,
   layout = "grid",
   minCardWidth = "16rem",
@@ -51,6 +59,12 @@ export function CardCollection<TItem>({
   className,
 }: CardCollectionProps<TItem>) {
   const prefersReducedMotion = useReducedMotion();
+  const renderOne = (item: TItem, i: number): React.ReactNode =>
+    renderItem
+      ? renderItem(item, i)
+      : card
+        ? renderCardSpec(card, item as Record<string, unknown>)
+        : null;
 
   if (items.length === 0) {
     return (
@@ -105,7 +119,7 @@ export function CardCollection<TItem>({
                 : { duration: DURATION.base, delay: Math.min(i * 0.035, 0.32), ease: EASE.entrance }
             }
           >
-            {renderItem(item, i)}
+            {renderOne(item, i)}
           </motion.li>
         );
       })}

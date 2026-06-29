@@ -31,3 +31,8 @@ export * from "./components/ui";
 
 // The high-level composites (archetype-mapped).
 export * from "./components/composites";
+
+// The heavy-component manifest — the source of truth for which composites MUST be
+// composed (never hand-rolled) so the render stays bounded (Phase 65 component-level rule).
+export { HEAVY_COMPONENTS, HEAVY_COMPONENT_NAMES } from "./catalog-manifest";
+export type { HeavyComponent } from "./catalog-manifest";

@@ -88,6 +88,28 @@ as props. Source of truth for the author/validator contract.
 - `ActionSpec` — `{ label, variant?: default|secondary|outline|ghost|destructive,
   icon?: <lucide name>, href? }` (render-only; no handlers).
 
+### Heavy components — MUST be composed, never hand-rolled (Phase 65 source of truth)
+
+A HEAVY component renders a dense / repetitive structure. Hand-authoring it inline blows the
+screen-author's output budget → timeout → skeleton. **Rule:** the author writes every screen
+creatively, but any heavy region is COMPOSED from `@prumo/ui` (the dense rendering lives inside
+the component, off the author's output, so the screen stays bounded AND creative). The
+companycouncil render gate mirrors this set (`src/catalog-manifest.ts` → `HEAVY_COMPONENTS`) and
+bounces hand-rolled equivalents (reprompt "compose `<name>`"). Tag new heavy composites in
+`src/catalog-manifest.ts` — the single source of truth.
+
+| heavy component | replaces (hand-rolled pattern the gate rejects) |
+| --- | --- |
+| `DataTable` | a hand-rolled `<table>` of data rows |
+| `ComparisonTable` | a hand-rolled comparison matrix (multi-column `<table>`) |
+| `StatDashboard` | a hand-rolled KPI / stat-card grid |
+| `Board` | a hand-rolled kanban / pipeline column layout |
+| `CardCollection` | a hand-rolled grid/list of many repeated cards |
+| `FormWizard` | a hand-rolled multi-step form |
+| `Timeline` | a hand-rolled vertical activity / history feed |
+| `DetailView` | a hand-rolled label/value fact-section layout |
+| `SettingsPanel` | a hand-rolled settings-rows layout |
+
 ---
 
 ## Primitives (the shadcn palette — building blocks for the composites + bespoke screens)

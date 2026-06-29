@@ -7,3 +7,5 @@ export { TokenSwatch, TokenPalette } from './components/TokenSwatch';
 export type { TokenSwatchProps, TokenPaletteProps } from './components/TokenSwatch';
 export * from './components/ui';
 export * from './components/composites';
+export { HEAVY_COMPONENTS, HEAVY_COMPONENT_NAMES } from './catalog-manifest';
+export type { HeavyComponent } from './catalog-manifest';
